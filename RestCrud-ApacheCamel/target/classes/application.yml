@@ -1,0 +1,87 @@
+
+# Habilita/desabilita el log Tracking a nivel general
+track: false
+loggingName: ms-rest-futboldemo-OC
+logging.config: classpath:logback-spring.xml
+spring.jackson.serialization.write-dates-as-timestamps: false
+
+
+server:
+  address: 0.0.0.0
+  port: 8080
+
+
+camel:
+  component:
+    servlet:
+      mapping:
+        context-path: /*
+
+
+
+management:
+  server:
+    address: 0.0.0.0
+    port: 8081
+  endpoint:
+    health:
+      enabled: true
+  endpoints:
+    enabled-by-default: false
+
+logging:
+  file: logback-spring.xml
+  level:
+    ms-rest-futboldemo: INFO
+
+spring:
+  main:
+    allow-bean-definition-overriding: true
+
+ms:
+  configuration:
+    rest:
+      consumer:
+        apiPath: /api-doc
+        apiTitle: ms-rest-futbol
+        apiVersion: 1.0
+        apiBasePath: 
+        serviceName: /demo
+    ds:
+      producer:
+        querylist: ${GET_QUERY_LIST}
+        queryDelete: ${GET_QUERY_DELETE}
+        queryOrdered: ${GET_QUERY_ORDERED}
+        queryPost: ${POST_QUERY}
+        queryPut: ${PUT_QUERY}
+        queryById: ${GET_QUERY_BY_ID}
+        host: ${HOST}
+        port: ${PORT}
+        database: ${DB}
+        user: ${USER_DB}
+        passwd: ${PASSWD_DB}
+        driver: ${DRIVER}
+
+GET_QUERY_LIST: SELECT * FROM Futbol
+GET_QUERY_DELETE: DELETE FROM Futbol WHERE id = :#$simple{header.id}
+GET_QUERY_BY_ID: SELECT * FROM Futbol WHERE id = :#$simple{header.id}
+GET_QUERY_ORDERED: SELECT * FROM Futbol ORDER BY Capacidad+0 ASC;
+HOST: localhost
+PORT: 3306
+DB: db
+USER_DB: admin
+PASSWD_DB: admin
+DRIVER: com.mysql.cj.jdbc.Driver
+VALIDATION_QUERY_DATABASE: SELECT 1
+PUT_QUERY: UPDATE Futbol SET 
+  Nombre = :#$simple{exchangeProperty.Nombre},
+  Ciudad = :#$simple{exchangeProperty.Ciudad},
+  Propietario = :#$simple{exchangeProperty.Propietario},
+  Capacidad = :#$simple{exchangeProperty.Capacidad},
+  Division = :#$simple{exchangeProperty.Division},
+  Competicion = :#$simple{exchangeProperty.Competicion},
+  Numero_Jugadores = :#$simple{exchangeProperty.Numero_Jugadores},
+  Fecha_Fundacion = :#$simple{exchangeProperty.Fecha_Fundacion}
+  WHERE id = :#$simple{header.id}
+
+POST_QUERY: INSERT INTO Futbol (Nombre, Ciudad, Propietario, Capacidad, Division, Competicion, Numero_Jugadores,Fecha_Fundacion) VALUES  (:#$simple{exchangeProperty.Nombre}, :#$simple{exchangeProperty.Ciudad}, :#$simple{exchangeProperty.Propietario}, :#$simple{exchangeProperty.Capacidad}, :#$simple{exchangeProperty.Division}, :#$simple{exchangeProperty.Competicion}, :#$simple{exchangeProperty.Numero_Jugadores}, :#$simple{exchangeProperty.Fecha_Fundacion})
